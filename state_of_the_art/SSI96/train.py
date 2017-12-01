@@ -1,0 +1,194 @@
+import sys
+sys.path.append("/unsullied/sharefs/liuyanyi02/lyy/CIFAR/latest_tools")
+from th import TensorboardHelper as TB
+
+import argparse
+from meghair.train.env import TrainingEnv, Action
+from megskull.opr.loss import WeightDecay
+
+from megskull.graph import FpropEnv
+import megskull
+from dpflow import InputPipe, control
+import time
+
+from network import make_network
+import numpy as np
+from megskull.utils.meta import override
+from megskull.optimizer import Momentum
+from megbrain.opr import concat
+import cv2
+from megskull.graph import Function
+import pickle
+import os
+
+"""
+class MyMomentum(Momentum):
+	@override(Momentum)
+	def get_gradient(self, param):
+		grad = super().get_gradient(param)
+		if ("offset" in param.name):
+			return grad
+"""
+def load_CIFAR_data(path = "/unsullied/sharefs/liuyanyi02/lyy/CIFAR/cifar-10-batches-py/test_batch"):
+	with open(path, "rb") as f:
+		dic = pickle.load(f, encoding = "bytes")
+	data = dic[b'data']
+	label = dic[b'labels']
+	return data, label
+
+class CIFAR_test:
+	def __init__(self):
+		self.data, self.labels = load_CIFAR_data()
+		with open("/unsullied/sharefs/liuyanyi02/lyy/CIFAR/meanstd.data", "rb") as f:
+			self.mean, self.std = pickle.load(f)
+		data = self.data
+		data = np.array(data)
+		data = (data - self.mean) / self.std
+		data = data.reshape(data.shape[0], 3, 32, 32)
+		self.data = data.astype(np.float32)
+		self.labels = np.array(self.labels)
+	def test(self, val_func):
+		batch_size = 1000
+		lis = []
+		for i in range(self.data.shape[0] // batch_size):
+			pred = val_func(data = self.data[i*batch_size : (i+1)*batch_size])
+			lis.append(pred)
+		if self.data.shape[0] % batch_size != 0:
+			i = self.data.shape[0] // batch_size
+			pred = val_func(data = self.data[i*batch_size :])
+			lis.append(pred)
+		pred = np.concatenate(lis, axis = 0)
+		pred = np.argmax(pred, axis = 1)
+		acc = (pred == self.labels).mean()
+		return acc
+
+minibatch_size = 64
+patch_size = 32
+net_name = "SSI96"
+path = ""
+
+def get_minibatch(p, size):
+	data = []
+	labels = []
+	for i in range(size):
+		(img, label) = p.get()
+		data.append(img)
+		labels.append(label)
+	return {"data": np.array(data).astype(np.float32), "label":np.array(labels)}
+
+def SS_reg(SS_list):
+	for params in SS_list:
+		shp, alpha1, alpha2, beta1, beta2 = params
+		alpha = np.random.uniform(0, 1, shp[0])
+		#alpha = np.broadcast_to(alpha[:, np.newaxis, np.newaxis, np.newaxis], shp)
+		beta = np.random.uniform(0, 1, shp[0])
+		#beta = np.broadcast_to(beta[:, np.newaxis, np.newaxis, np.newaxis], shp)
+		alpha1.set_value(alpha)
+		alpha2.set_value(1 - alpha)
+		beta1.set_value(beta)
+		beta2.set_value(1 - beta)
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	os.system("rm -r tbdata/")
+	tb = TB("tbdata/")
+
+	with TrainingEnv(name = "lyy.{}.test".format(net_name), part_count = 2, custom_parser = parser) as env:
+		args = parser.parse_args()
+		num_GPU = len(args.devices.split(','))
+		minibatch_size *= num_GPU
+		net, SS_list = make_network(minibatch_size = minibatch_size)
+		preloss = net.loss_var
+		net.loss_var = WeightDecay(net.loss_var, {"*conv*": 1e-4, "*fc*": 1e-4, "*bnaff*:k": 1e-4, "*offset*":1e-4})
+
+		train_func = env.make_func_from_loss_var(net.loss_var, "train", train_state = True)
+	
+		lr = 0.1 * num_GPU
+		optimizer = Momentum(lr, 0.9)
+		optimizer(train_func)
+		
+		#train_func.comp_graph.share_device_memory_with(valid_func.comp_graph)
+	
+		dic = {
+			"loss": net.loss_var,
+			"pre_loss": preloss,
+			"outputs": net.outputs[0]
+		}
+		train_func.compile(dic)
+		valid_func = Function().compile(net.outputs[0])
+		
+		env.register_checkpoint_component("network", net)
+		env.register_checkpoint_component("opt_state", train_func.optimizer_state)
+	
+		tr_p = InputPipe("lyy.CIFAR10.train.cutout", buffer_size = 1000)
+		va_p = InputPipe("lyy.CIFAR10.valid", buffer_size = 1000)
+		epoch = 0
+		EPOCH_NUM = 50000 // minibatch_size
+		i = 0
+		max_acc = 0
+		#ORI_IT = 64000
+		#BN_IT = 10000
+		#TOT_IT = ORI_IT + BN_IT
+		TOT_IT = int(50000 * 1800 / minibatch_size)
+
+		C = CIFAR_test()
+	
+		his = []
+		his_test = []
+		import time
+		with control(io = [tr_p]):
+			with control(io = [va_p]):
+		
+				a = time.time()
+				while i <= TOT_IT:
+					i += 1
+					tb.tick()
+	
+					token1 = time.time()
+
+					data = get_minibatch(tr_p, minibatch_size)
+					time_data = time.time() - token1
+					
+					token2 = time.time()
+					out = train_func(data = data['data'], label = data["label"])
+					time_train = time.time() - token2
+					if time_data > (time_train + time_data) * 0.2:
+						print("Loading data may spends too much time {}".format(time_data / (time_train + time_data)))
+					loss = out["pre_loss"]
+					pred = np.array(out["outputs"]).argmax(axis = 1)
+					acc = (pred == np.array(data["label"])).mean()
+					his.append([loss, acc])
+					tb.add_scalar("loss", loss)
+					tb.add_scalar("traing_acc", acc)
+					print("Minibatch = {}, Loss = {}, Acc = {}, LR = {}".format(i, loss, acc, int(optimizer.learning_rate * 1000) / 1000))
+					#Learning Rate Adjusting
+					"""
+					if i == ORI_IT // 2 or i == ORI_IT // 4 * 3:
+						optimizer.learning_rate /= 10
+					if i == ORI_IT:
+						optimizer.learning_rate = 1e-5
+					"""
+					optimizer.learning_rate = 0.5 * lr * (1 + np.cos(i / TOT_IT * np.pi))
+
+					if i % (EPOCH_NUM) == 0:
+						epoch += 1
+						acc = C.test(valid_func)
+						his_test.append([i, acc])
+	
+						print("Epoch = {}, Acc = {}, Max_acc = {}".format(epoch, acc, max_acc))
+						b = time.time()
+						b = b + (b - a) / i * (TOT_IT - i)
+						print("Expected finish time {}".format(time.asctime(time.localtime(b))))
+	
+						tb.add_scalar("test_acc", acc)
+						if acc > max_acc:
+							max_acc = acc
+						env.save_checkpoint(path + "{}.data".format(net_name))
+						print("**************************")
+						import pickle
+						with open("hisloss.data", "wb") as f:
+							pickle.dump(his, f)
+						with open("histest.data", "wb") as f:
+							pickle.dump(his_test, f)
+						tb.flush()
+

@@ -1,0 +1,334 @@
+[21 19:21:55 330@env.py:meghair.train.env] WRN --fast-run not enabled; execution may be slow
+[21 19:21:58 0@(unknown file):megbrain] create CompNode gpu0:0 from logical xpux:0
+[21 19:21:58 0@(unknown file):megbrain] cuda: gpu0: name=`TITAN Xp' dyn_mem_reserve=0.00MiB alignment=0x200
+[21 19:21:58 1021@opr.py:megbrain] create CompNode cpu0:0 from logical cpux:0
+[21 19:21:58 938@regularizer.py:megskull.opr.regularizer] WRN unused weight decay spec: *offset*
+[21 19:21:58 195@fprop.py:megskull.graph.fprop] FpropEnv(train): start fprop VarNode(owner_opr=weight_decay(loss){WeightDecay@0x7f335ebcb6a0})
+[21 19:21:58 161@fprop.py:megskull.graph.fprop] init FpropEnv(train) rng using random seed 2674914893
+[21 19:21:58 1231@opr.py:megbrain] WRN dtype of index in IndexingOneHot must be Int32, got Float32 for variable label; convert to Int32 implicitly
+[21 19:21:58 962@regularizer.py:megskull.opr.regularizer] weight decay:
+ conv1:W: 0.0001
+ bnaff1:k: 0.0001
+ conv2:W: 0.0001
+ bnaff2:k: 0.0001
+ conv3:W: 0.0001
+ bnaff3:k: 0.0001
+ conv4:W: 0.0001
+ bnaff4:k: 0.0001
+ conv5:W: 0.0001
+ bnaff5:k: 0.0001
+ conv6:W: 0.0001
+ bnaff6:k: 0.0001
+ conv7:W: 0.0001
+ bnaff7:k: 0.0001
+ conv8:W: 0.0001
+ bnaff8:k: 0.0001
+ conv9:W: 0.0001
+ bnaff9:k: 0.0001
+ conv10:W: 0.0001
+ bnaff10:k: 0.0001
+ conv11:W: 0.0001
+ bnaff11:k: 0.0001
+ conv12:W: 0.0001
+ bnaff12:k: 0.0001
+ conv13:W: 0.0001
+ bnaff13:k: 0.0001
+ conv14:W: 0.0001
+ bnaff14:k: 0.0001
+ conv15:W: 0.0001
+ bnaff15:k: 0.0001
+ conv16:W: 0.0001
+ bnaff16:k: 0.0001
+ conv17:W: 0.0001
+ bnaff17:k: 0.0001
+ conv18:W: 0.0001
+ bnaff18:k: 0.0001
+ conv19:W: 0.0001
+ bnaff19:k: 0.0001
+ fc0:W: 0.0001
+[21 19:21:58 54@param_init.py:megskull.opr.helper.param_init] start automatic initilization for 78 params
+[21 19:21:58 60@param_init.py:megskull.opr.helper.param_init] finished param initilization:
+ conv1:W{Conv2D}: from Gaussian with std=0.2722
+ conv2:W{Conv2D}: from Gaussian with std=0.1179
+ conv3:W{Conv2D}: from Gaussian with std=0.1179
+ conv4:W{Conv2D}: from Gaussian with std=0.1179
+ conv5:W{Conv2D}: from Gaussian with std=0.1179
+ conv6:W{Conv2D}: from Gaussian with std=0.1179
+ conv7:W{Conv2D}: from Gaussian with std=0.1179
+ conv8:W{Conv2D}: from Gaussian with std=0.1179
+ conv9:W{Conv2D}: from Gaussian with std=0.0833
+ conv10:W{Conv2D}: from Gaussian with std=0.0833
+ conv11:W{Conv2D}: from Gaussian with std=0.0833
+ conv12:W{Conv2D}: from Gaussian with std=0.0833
+ conv13:W{Conv2D}: from Gaussian with std=0.0833
+ conv14:W{Conv2D}: from Gaussian with std=0.0833
+ conv15:W{Conv2D}: from Gaussian with std=0.0589
+ conv16:W{Conv2D}: from Gaussian with std=0.0589
+ conv17:W{Conv2D}: from Gaussian with std=0.0589
+ conv18:W{Conv2D}: from Gaussian with std=0.0589
+ conv19:W{Conv2D}: from Gaussian with std=0.0589
+ fc0:W{FullyConnected}: from Gaussian with std=0.1250
+[21 19:21:58 1231@opr.py:megbrain] WRN dtype of index in IndexingOneHot must be Int32, got Float32 for variable label; convert to Int32 implicitly
+[21 19:21:58 272@fprop.py:megskull.graph.fprop] FpropEnv(train): shapes of var nodes:
+ data: (128, 3, 32, 32)
+ label: (128)
+ conv1: (128, 16, 32, 32)
+ bn1: (128, 16, 32, 32)
+ bnaff1: (128, 16, 32, 32)
+ conv2: (128, 16, 32, 32)
+ bn2: (128, 16, 32, 32)
+ bnaff2: (128, 16, 32, 32)
+ conv3: (128, 16, 32, 32)
+ bn3: (128, 16, 32, 32)
+ bnaff3: (128, 16, 32, 32)
+ conv4: (128, 16, 32, 32)
+ bn4: (128, 16, 32, 32)
+ bnaff4: (128, 16, 32, 32)
+ conv5: (128, 16, 32, 32)
+ bn5: (128, 16, 32, 32)
+ bnaff5: (128, 16, 32, 32)
+ conv6: (128, 16, 32, 32)
+ bn6: (128, 16, 32, 32)
+ bnaff6: (128, 16, 32, 32)
+ conv7: (128, 16, 32, 32)
+ bn7: (128, 16, 32, 32)
+ bnaff7: (128, 16, 32, 32)
+ pooling16: (128, 16, 16, 16)
+ conv8: (128, 32, 16, 16)
+ bn8: (128, 32, 16, 16)
+ bnaff8: (128, 32, 16, 16)
+ conv9: (128, 32, 16, 16)
+ bn9: (128, 32, 16, 16)
+ bnaff9: (128, 32, 16, 16)
+ conv10: (128, 32, 16, 16)
+ bn10: (128, 32, 16, 16)
+ bnaff10: (128, 32, 16, 16)
+ conv11: (128, 32, 16, 16)
+ bn11: (128, 32, 16, 16)
+ bnaff11: (128, 32, 16, 16)
+ conv12: (128, 32, 16, 16)
+ bn12: (128, 32, 16, 16)
+ bnaff12: (128, 32, 16, 16)
+ conv13: (128, 32, 16, 16)
+ bn13: (128, 32, 16, 16)
+ bnaff13: (128, 32, 16, 16)
+ pooling32: (128, 32, 8, 8)
+ conv14: (128, 64, 8, 8)
+ bn14: (128, 64, 8, 8)
+ bnaff14: (128, 64, 8, 8)
+ conv15: (128, 64, 8, 8)
+ bn15: (128, 64, 8, 8)
+ bnaff15: (128, 64, 8, 8)
+ conv16: (128, 64, 8, 8)
+ bn16: (128, 64, 8, 8)
+ bnaff16: (128, 64, 8, 8)
+ conv17: (128, 64, 8, 8)
+ bn17: (128, 64, 8, 8)
+ bnaff17: (128, 64, 8, 8)
+ conv18: (128, 64, 8, 8)
+ bn18: (128, 64, 8, 8)
+ bnaff18: (128, 64, 8, 8)
+ conv19: (128, 64, 8, 8)
+ bn19: (128, 64, 8, 8)
+ bnaff19: (128, 64, 8, 8)
+ fc0: (128, 10)
+ pred: (128, 10)
+ loss: (1)
+ weight_decay(loss): (1)
+[21 19:21:58 195@fprop.py:megskull.graph.fprop] FpropEnv(val): start fprop VarNode(owner_opr=weight_decay(loss){WeightDecay@0x7f335ebcb6a0})
+[21 19:21:58 1231@opr.py:megbrain] WRN dtype of index in IndexingOneHot must be Int32, got Float32 for variable label; convert to Int32 implicitly
+[21 19:21:58 962@regularizer.py:megskull.opr.regularizer] weight decay:
+ conv1:W: 0.0001
+ bnaff1:k: 0.0001
+ conv2:W: 0.0001
+ bnaff2:k: 0.0001
+ conv3:W: 0.0001
+ bnaff3:k: 0.0001
+ conv4:W: 0.0001
+ bnaff4:k: 0.0001
+ conv5:W: 0.0001
+ bnaff5:k: 0.0001
+ conv6:W: 0.0001
+ bnaff6:k: 0.0001
+ conv7:W: 0.0001
+ bnaff7:k: 0.0001
+ conv8:W: 0.0001
+ bnaff8:k: 0.0001
+ conv9:W: 0.0001
+ bnaff9:k: 0.0001
+ conv10:W: 0.0001
+ bnaff10:k: 0.0001
+ conv11:W: 0.0001
+ bnaff11:k: 0.0001
+ conv12:W: 0.0001
+ bnaff12:k: 0.0001
+ conv13:W: 0.0001
+ bnaff13:k: 0.0001
+ conv14:W: 0.0001
+ bnaff14:k: 0.0001
+ conv15:W: 0.0001
+ bnaff15:k: 0.0001
+ conv16:W: 0.0001
+ bnaff16:k: 0.0001
+ conv17:W: 0.0001
+ bnaff17:k: 0.0001
+ conv18:W: 0.0001
+ bnaff18:k: 0.0001
+ conv19:W: 0.0001
+ bnaff19:k: 0.0001
+ fc0:W: 0.0001
+[21 19:21:58 272@fprop.py:megskull.graph.fprop] FpropEnv(val): shapes of var nodes:
+ data: (128, 3, 32, 32)
+ label: (128)
+ conv1: (128, 16, 32, 32)
+ bn1: (128, 16, 32, 32)
+ bnaff1: (128, 16, 32, 32)
+ conv2: (128, 16, 32, 32)
+ bn2: (128, 16, 32, 32)
+ bnaff2: (128, 16, 32, 32)
+ conv3: (128, 16, 32, 32)
+ bn3: (128, 16, 32, 32)
+ bnaff3: (128, 16, 32, 32)
+ conv4: (128, 16, 32, 32)
+ bn4: (128, 16, 32, 32)
+ bnaff4: (128, 16, 32, 32)
+ conv5: (128, 16, 32, 32)
+ bn5: (128, 16, 32, 32)
+ bnaff5: (128, 16, 32, 32)
+ conv6: (128, 16, 32, 32)
+ bn6: (128, 16, 32, 32)
+ bnaff6: (128, 16, 32, 32)
+ conv7: (128, 16, 32, 32)
+ bn7: (128, 16, 32, 32)
+ bnaff7: (128, 16, 32, 32)
+ pooling16: (128, 16, 16, 16)
+ conv8: (128, 32, 16, 16)
+ bn8: (128, 32, 16, 16)
+ bnaff8: (128, 32, 16, 16)
+ conv9: (128, 32, 16, 16)
+ bn9: (128, 32, 16, 16)
+ bnaff9: (128, 32, 16, 16)
+ conv10: (128, 32, 16, 16)
+ bn10: (128, 32, 16, 16)
+ bnaff10: (128, 32, 16, 16)
+ conv11: (128, 32, 16, 16)
+ bn11: (128, 32, 16, 16)
+ bnaff11: (128, 32, 16, 16)
+ conv12: (128, 32, 16, 16)
+ bn12: (128, 32, 16, 16)
+ bnaff12: (128, 32, 16, 16)
+ conv13: (128, 32, 16, 16)
+ bn13: (128, 32, 16, 16)
+ bnaff13: (128, 32, 16, 16)
+ pooling32: (128, 32, 8, 8)
+ conv14: (128, 64, 8, 8)
+ bn14: (128, 64, 8, 8)
+ bnaff14: (128, 64, 8, 8)
+ conv15: (128, 64, 8, 8)
+ bn15: (128, 64, 8, 8)
+ bnaff15: (128, 64, 8, 8)
+ conv16: (128, 64, 8, 8)
+ bn16: (128, 64, 8, 8)
+ bnaff16: (128, 64, 8, 8)
+ conv17: (128, 64, 8, 8)
+ bn17: (128, 64, 8, 8)
+ bnaff17: (128, 64, 8, 8)
+ conv18: (128, 64, 8, 8)
+ bn18: (128, 64, 8, 8)
+ bnaff18: (128, 64, 8, 8)
+ conv19: (128, 64, 8, 8)
+ bn19: (128, 64, 8, 8)
+ bnaff19: (128, 64, 8, 8)
+ fc0: (128, 10)
+ pred: (128, 10)
+ loss: (1)
+ weight_decay(loss): (1)
+[21 19:21:58 245@base.py:megskull.optimizer.base] params to train:
+ conv1:W: (16, 3, 3, 3) dim=432 cn=gpu0:0
+ conv1:b: (16,) dim=16 cn=gpu0:0
+ bnaff1:k: (16,) dim=16 cn=gpu0:0
+ bnaff1:b: (16,) dim=16 cn=gpu0:0
+ conv2:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv2:b: (16,) dim=16 cn=gpu0:0
+ bnaff2:k: (16,) dim=16 cn=gpu0:0
+ bnaff2:b: (16,) dim=16 cn=gpu0:0
+ conv3:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv3:b: (16,) dim=16 cn=gpu0:0
+ bnaff3:k: (16,) dim=16 cn=gpu0:0
+ bnaff3:b: (16,) dim=16 cn=gpu0:0
+ conv4:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv4:b: (16,) dim=16 cn=gpu0:0
+ bnaff4:k: (16,) dim=16 cn=gpu0:0
+ bnaff4:b: (16,) dim=16 cn=gpu0:0
+ conv5:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv5:b: (16,) dim=16 cn=gpu0:0
+ bnaff5:k: (16,) dim=16 cn=gpu0:0
+ bnaff5:b: (16,) dim=16 cn=gpu0:0
+ conv6:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv6:b: (16,) dim=16 cn=gpu0:0
+ bnaff6:k: (16,) dim=16 cn=gpu0:0
+ bnaff6:b: (16,) dim=16 cn=gpu0:0
+ conv7:W: (16, 16, 3, 3) dim=2304 cn=gpu0:0
+ conv7:b: (16,) dim=16 cn=gpu0:0
+ bnaff7:k: (16,) dim=16 cn=gpu0:0
+ bnaff7:b: (16,) dim=16 cn=gpu0:0
+ conv8:W: (32, 16, 3, 3) dim=4608 cn=gpu0:0
+ conv8:b: (32,) dim=32 cn=gpu0:0
+ bnaff8:k: (32,) dim=32 cn=gpu0:0
+ bnaff8:b: (32,) dim=32 cn=gpu0:0
+ conv9:W: (32, 32, 3, 3) dim=9216 cn=gpu0:0
+ conv9:b: (32,) dim=32 cn=gpu0:0
+ bnaff9:k: (32,) dim=32 cn=gpu0:0
+ bnaff9:b: (32,) dim=32 cn=gpu0:0
+ conv10:W: (32, 32, 3, 3) dim=9216 cn=gpu0:0
+ conv10:b: (32,) dim=32 cn=gpu0:0
+ bnaff10:k: (32,) dim=32 cn=gpu0:0
+ bnaff10:b: (32,) dim=32 cn=gpu0:0
+ conv11:W: (32, 32, 3, 3) dim=9216 cn=gpu0:0
+ conv11:b: (32,) dim=32 cn=gpu0:0
+ bnaff11:k: (32,) dim=32 cn=gpu0:0
+ bnaff11:b: (32,) dim=32 cn=gpu0:0
+ conv12:W: (32, 32, 3, 3) dim=9216 cn=gpu0:0
+ conv12:b: (32,) dim=32 cn=gpu0:0
+ bnaff12:k: (32,) dim=32 cn=gpu0:0
+ bnaff12:b: (32,) dim=32 cn=gpu0:0
+ conv13:W: (32, 32, 3, 3) dim=9216 cn=gpu0:0
+ conv13:b: (32,) dim=32 cn=gpu0:0
+ bnaff13:k: (32,) dim=32 cn=gpu0:0
+ bnaff13:b: (32,) dim=32 cn=gpu0:0
+ conv14:W: (64, 32, 3, 3) dim=18432 cn=gpu0:0
+ conv14:b: (64,) dim=64 cn=gpu0:0
+ bnaff14:k: (64,) dim=64 cn=gpu0:0
+ bnaff14:b: (64,) dim=64 cn=gpu0:0
+ conv15:W: (64, 64, 3, 3) dim=36864 cn=gpu0:0
+ conv15:b: (64,) dim=64 cn=gpu0:0
+ bnaff15:k: (64,) dim=64 cn=gpu0:0
+ bnaff15:b: (64,) dim=64 cn=gpu0:0
+ conv16:W: (64, 64, 3, 3) dim=36864 cn=gpu0:0
+ conv16:b: (64,) dim=64 cn=gpu0:0
+ bnaff16:k: (64,) dim=64 cn=gpu0:0
+ bnaff16:b: (64,) dim=64 cn=gpu0:0
+ conv17:W: (64, 64, 3, 3) dim=36864 cn=gpu0:0
+ conv17:b: (64,) dim=64 cn=gpu0:0
+ bnaff17:k: (64,) dim=64 cn=gpu0:0
+ bnaff17:b: (64,) dim=64 cn=gpu0:0
+ conv18:W: (64, 64, 3, 3) dim=36864 cn=gpu0:0
+ conv18:b: (64,) dim=64 cn=gpu0:0
+ bnaff18:k: (64,) dim=64 cn=gpu0:0
+ bnaff18:b: (64,) dim=64 cn=gpu0:0
+ conv19:W: (64, 64, 3, 3) dim=36864 cn=gpu0:0
+ conv19:b: (64,) dim=64 cn=gpu0:0
+ bnaff19:k: (64,) dim=64 cn=gpu0:0
+ bnaff19:b: (64,) dim=64 cn=gpu0:0
+ fc0:W: (64, 10) dim=640 cn=gpu0:0
+ fc0:b: (10,) dim=10 cn=gpu0:0
+ total_dim=270410 (0.26M)
+[21 19:21:59 991@mgb.py:megbrain] graph optimization: applied 16 passes, total 16239 var(s) replaced; time=253.73ms
+[21 19:21:59 991@mgb.py:megbrain] opr seq of length 1820: var_static=2185 var_dynamic_shape=0 var_dynamic_storage=0 no_sys_alloc=0
+[21 19:21:59 991@mgb.py:megbrain] graph optimization: applied 8 passes, total 1715 var(s) replaced; time=25.26ms
+[21 19:21:59 991@mgb.py:megbrain] opr seq of length 559: var_static=627 var_dynamic_shape=0 var_dynamic_storage=0 no_sys_alloc=0
+[21 19:21:59 189@env.py:meghair.train.env] Saving checkpoint to file data/rand.data
+[21 19:21:59 204@env.py:meghair.train.env] Save checkpoint to file data/rand.data, Time usage:
+	prepare snapshot: 0.005238056182861328, IO: 0.21152043342590332
+[21 19:21:59 344@env.py:meghair.train.env] WRN A exception occurred during WorkingEnv initialization, give up running process
+[21 19:21:59 0@(unknown file):megbrain] WRN cuda comp node method called after global finalize
