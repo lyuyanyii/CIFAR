@@ -19,7 +19,6 @@ from megbrain.opr import concat
 import cv2
 from megskull.graph import Function
 import pickle
-import os
 
 """
 class MyMomentum(Momentum):
@@ -48,19 +47,15 @@ class CIFAR_test:
 		self.data = data.astype(np.float32)
 		self.labels = np.array(self.labels)
 	def test(self, val_func):
-		batch_size = 128
+		batch_size = 1000
 		lis = []
 		for i in range(self.data.shape[0] // batch_size):
 			pred = val_func(data = self.data[i*batch_size : (i+1)*batch_size])
 			lis.append(pred)
 		if self.data.shape[0] % batch_size != 0:
 			i = self.data.shape[0] // batch_size
-			data_res = list(self.data[i*batch_size :])
-			prelen = len(data_res)
-			for i in range(minibatch_size - prelen):
-				data_res.append(data_res[0])
-			pred = val_func(data = data_res)
-			lis.append(pred[:prelen])
+			pred = val_func(data = self.data[i*batch_size :])
+			lis.append(pred)
 		pred = np.concatenate(lis, axis = 0)
 		pred = np.argmax(pred, axis = 1)
 		acc = (pred == self.labels).mean()
@@ -68,7 +63,7 @@ class CIFAR_test:
 
 minibatch_size = 128
 patch_size = 32
-net_name = NAME_HERE
+net_name = "d40"
 path = ""
 
 def get_minibatch(p, size):
@@ -82,20 +77,16 @@ def get_minibatch(p, size):
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	os.system("rm -r tbdata/")
 	tb = TB("tbdata/")
 
 	with TrainingEnv(name = "lyy.{}.test".format(net_name), part_count = 2, custom_parser = parser) as env:
-		args = parser.parse_args()
-		num_GPU = len(args.devices.split(','))
-		minibatch_size *= num_GPU
 		net = make_network(minibatch_size = minibatch_size)
 		preloss = net.loss_var
-		net.loss_var = WeightDecay(net.loss_var, {"*conv*": 1e-4, "*fc*": 1e-4, "*bnaff*:k": 1e-4, "*offset*":1e-4})
+		net.loss_var = WeightDecay(net.loss_var, {"*conv*:W": 1e-4, "*fc*:W": 1e-4, "*bnaff*:k": 1e-4, "*offset*":1e-4})
 
 		train_func = env.make_func_from_loss_var(net.loss_var, "train", train_state = True)
 	
-		lr = 0.1 * num_GPU
+		lr = 0.1
 		optimizer = Momentum(lr, 0.9)
 		optimizer(train_func)
 		

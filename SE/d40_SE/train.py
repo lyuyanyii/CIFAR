@@ -48,19 +48,15 @@ class CIFAR_test:
 		self.data = data.astype(np.float32)
 		self.labels = np.array(self.labels)
 	def test(self, val_func):
-		batch_size = 128
+		batch_size = 1000
 		lis = []
 		for i in range(self.data.shape[0] // batch_size):
 			pred = val_func(data = self.data[i*batch_size : (i+1)*batch_size])
 			lis.append(pred)
 		if self.data.shape[0] % batch_size != 0:
 			i = self.data.shape[0] // batch_size
-			data_res = list(self.data[i*batch_size :])
-			prelen = len(data_res)
-			for i in range(minibatch_size - prelen):
-				data_res.append(data_res[0])
-			pred = val_func(data = data_res)
-			lis.append(pred[:prelen])
+			pred = val_func(data = self.data[i*batch_size :])
+			lis.append(pred)
 		pred = np.concatenate(lis, axis = 0)
 		pred = np.argmax(pred, axis = 1)
 		acc = (pred == self.labels).mean()
@@ -68,7 +64,7 @@ class CIFAR_test:
 
 minibatch_size = 128
 patch_size = 32
-net_name = NAME_HERE
+net_name = "d40_SE"
 path = ""
 
 def get_minibatch(p, size):

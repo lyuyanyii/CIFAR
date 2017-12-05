@@ -68,7 +68,7 @@ class CIFAR_test:
 
 minibatch_size = 128
 patch_size = 32
-net_name = NAME_HERE
+net_name = "r20_MY_3"
 path = ""
 
 def get_minibatch(p, size):
