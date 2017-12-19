@@ -43,8 +43,8 @@ class CIFAR_test:
 			self.mean, self.std = pickle.load(f)
 		data = self.data
 		data = np.array(data)
-		data = (data - self.mean) / self.std
 		data = data.reshape(data.shape[0], 3, 32, 32)
+		data = (data - self.mean) / self.std
 		self.data = data.astype(np.float32)
 		self.labels = np.array(self.labels)
 	def test(self, val_func):
@@ -68,7 +68,7 @@ class CIFAR_test:
 
 minibatch_size = 128
 patch_size = 32
-net_name = NAME_HERE
+net_name = NET_NAME_HERE
 path = ""
 
 def get_minibatch(p, size):
@@ -84,6 +84,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	os.system("rm -r tbdata/")
 	tb = TB("tbdata/")
+	iswarmup = False
 
 	with TrainingEnv(name = "lyy.{}.test".format(net_name), part_count = 2, custom_parser = parser) as env:
 		args = parser.parse_args()
@@ -91,11 +92,13 @@ if __name__ == '__main__':
 		minibatch_size *= num_GPU
 		net = make_network(minibatch_size = minibatch_size)
 		preloss = net.loss_var
-		net.loss_var = WeightDecay(net.loss_var, {"*conv*": 1e-4, "*fc*": 1e-4, "*bnaff*:k": 1e-4, "*offset*":1e-4})
+		net.loss_var = WeightDecay(net.loss_var, {"*conv*": 1e-4, "*fc*": 1e-4})
 
 		train_func = env.make_func_from_loss_var(net.loss_var, "train", train_state = True)
 	
 		lr = 0.1 * num_GPU
+		if iswarmup:
+			lr /= 10
 		optimizer = Momentum(lr, 0.9)
 		optimizer(train_func)
 		
@@ -118,7 +121,7 @@ if __name__ == '__main__':
 		EPOCH_NUM = 50000 // minibatch_size
 		i = 0
 		max_acc = 0
-		ORI_IT = 64000
+		ORI_IT = 64000 + 5000 * iswarmup
 		BN_IT = 10000
 		TOT_IT = ORI_IT + BN_IT
 
@@ -152,6 +155,8 @@ if __name__ == '__main__':
 					tb.add_scalar("traing_acc", acc)
 					print("Minibatch = {}, Loss = {}, Acc = {}".format(i, loss, acc))
 					#Learning Rate Adjusting
+					if i == 400 and iswarmup:
+						optimizer.learning_rate *= 10
 					if i == ORI_IT // 2 or i == ORI_IT // 4 * 3:
 						optimizer.learning_rate /= 10
 					if i == ORI_IT:
