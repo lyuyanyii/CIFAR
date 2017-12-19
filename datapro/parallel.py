@@ -39,8 +39,8 @@ def worker(data, pname, que, lock, is_train, mean, std):
 			#que.put((int(idx) + 1) % len(data[0]))
 			img = np.array(data[0][int(idx)])
 			img = img.astype(np.float32)
-			img = (img - mean) / std
 			img = np.resize(img, (3, 32, 32))
+			img = (img - mean) / std
 			#img = (img - 128) / 256
 			if is_train:
 				img = augment(img, x, y)
@@ -76,8 +76,12 @@ if True:
 	for i in range(1, 5):
 		data = np.concatenate([data, np.array(dics[i][b'data'])], axis = 0)
 		labels = np.concatenate([labels, np.array(dics[i][b'labels'])], axis = 0)
-	mean = np.mean(data, axis = 0)
-	std = np.std(data, axis = 0)
+	mean = data.reshape(50000, 3, 32, 32)
+	mean = mean.transpose(1, 0, 2, 3)
+	mean = np.mean(mean, axis = 1)
+	std = data.reshape(50000, 3, 32, 32)
+	std = std.transpose(1, 0, 2, 3)
+	std = np.std(std, axis = 1)
 	#p = np.arange(50000, dtype = np.int32)
 	#np.random.shuffle(p)
 	#data = np.array([data[i] for i in p]) 
@@ -106,6 +110,7 @@ if True:
 		proc.start()
 		lis.append(proc)
 	
+	"""
 	que_val = Queue(1)
 	que_val.put(0)
 	p_val = "lyy.CIFAR10.valid"
@@ -113,6 +118,7 @@ if True:
 		proc = P(target = worker, args = (valid_dataset, p_val, que_val, lock, False, mean, std))
 		proc.start()
 		lis.append(proc)
+	"""
 	
 	for i in lis:
 		i.join()
